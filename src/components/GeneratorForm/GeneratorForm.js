@@ -29,7 +29,9 @@ class GeneratorForm extends Component {
     const seperatorSet = formData.get('seperator-set').split(',');
     const paddingSet = formData.get('padding-set').split(',');
 
-    const dictionarySize = words.length;
+    const filteredWords = words.filter(word => word.length >= minWordLength && word.length <= maxWordLength);
+    
+    const dictionarySize = filteredWords.length;
 
     const entropy = Math.log2(
       Math.pow(dictionarySize, numberOfWords) * seperatorSet.length * paddingSet.length * (digitPadding == 0 ? 0 : 10)
@@ -57,6 +59,8 @@ class GeneratorForm extends Component {
 
   generatePassword(formData) {
     const numberOfWords = Number(formData.get('number-of-words'));
+    const minWordLength = Number(formData.get('minimum-word-length'));
+    const maxWordLength = Number(formData.get('maximum-word-length'));
 
     const digitsBefore = Number(formData.get('digits-before'));
     const digitsAfter = Number(formData.get('digits-after'));
@@ -84,12 +88,18 @@ class GeneratorForm extends Component {
     };
     var i;
 
+    const filteredWords = words.filter(word => word.length >= minWordLength && word.length <= maxWordLength);
+
+    if(filteredWords.length == 0) {
+      return password;
+    }
+
     /* Words */
     for(i=0; i<numberOfWords; i++) {
-      var word = words[Math.floor(Math.random()*words.length)];
+      var word = filteredWords[Math.floor(Math.random()*filteredWords.length)];
       switch(transformation) {
         case 'alternate_word_case':
-          word = (i % 2 == 0) ? word.toUpperCase() : word.toLowerCase();
+          word = (i % 2) ? word.toUpperCase() : word.toLowerCase();
           break;
         case 'capitilise_each_word':
           word = word.charAt(0).toUpperCase() + word.slice(1);
@@ -200,7 +210,10 @@ class GeneratorForm extends Component {
               <div className="col-md-6">
               <h1 className="small-caps-title">Length</h1>
               <h1 className="stats-text">
-                {this.state.lengthLowerBound} <small>to</small> {this.state.lengthUpperBound} characters
+                {this.state.lengthLowerBound == this.state.lengthUpperBound ?
+                this.state.lengthLowerBound + " characters ":
+                this.state.lengthLowerBound + " to " + this.state.lengthUpperBound + " characters"
+                }
               </h1>
               </div>
               <div className="col-md-6">
