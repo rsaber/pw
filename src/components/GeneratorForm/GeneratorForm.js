@@ -215,8 +215,10 @@ class GeneratorForm extends Component {
             <div className="row form-row"><div className="col-md-12">
             <label className="small-caps-title" >Number of Words
             <select className="number" name="number-of-words">
+                <option value="1">1</option>
+                <option value="2">2</option>
                 <option value="3">3</option>
-                <option defaultValue="4">4</option>
+                <option selected defaultValue="4">4</option>
                 <option value="5">5</option>
                 <option value="6">6</option>
                 <option value="7">7</option>
@@ -307,7 +309,9 @@ class GeneratorForm extends Component {
             <div className="col-md-6">
             <label className="small-caps-title" >Digits Before
             <select className="number" name="digits-before">
-                <option defaultValue="2">2</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option selected defaultValue="2">2</option>
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
@@ -318,7 +322,9 @@ class GeneratorForm extends Component {
             <div className="col-md-6">
             <label className="small-caps-title" >Digits After
             <select className="number" name="digits-after">
-                <option defaultValue="2">2</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option selected defaultValue="2">2</option>
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
@@ -342,7 +348,9 @@ class GeneratorForm extends Component {
             <div className="col-md-6">
             <label className="small-caps-title" >Characters Before
             <select className="number" name="characters-before">
-                <option defaultValue="2">2</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option selected defaultValue="2">2</option>
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
@@ -353,7 +361,9 @@ class GeneratorForm extends Component {
             <div className="col-md-6">
             <label className="small-caps-title" >Characters After
             <select className="number" name="characters-after">
-                <option defaultValue="2">2</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option selected defaultValue="2">2</option>
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
