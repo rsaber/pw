@@ -5,7 +5,6 @@ class GeneratorForm extends Component {
   constructor(props) {
     super(props);
     this.submitForm = this.submitForm.bind(this);
-    this.updateForm = this.updateForm.bind(this);
     this.state = {
       error : false,
       generated : false,
@@ -21,16 +20,7 @@ class GeneratorForm extends Component {
     return (e) => {
       e.preventDefault();
 
-      const formData = new FormData(e.target);      
-
-      this.setState({generated:true, generatedPassword: "hello"})
-    }
-  }
-
-  updateForm() {
-    return (e) => {
-      console.log(e);
-      const formData = new FormData(e.target);  
+      const formData = new FormData(e.target);
 
       const numberOfWords = Number(formData.get('number-of-words'));
       const minWordLength = Number(formData.get('minimum-word-length'));
@@ -41,20 +31,30 @@ class GeneratorForm extends Component {
       
       this.setState({
         error : false,
+        generated : true,
         lengthLowerBound: numberOfWords * minWordLength + (numberOfWords - 1) + digitPadding + characterPadding,
         lengthUpperBound: numberOfWords * maxWordLength + (numberOfWords - 1) + digitPadding + characterPadding
       });
+
+      this.setState({generated:true, generatedPassword: formData.get('language')})
     }
   }
 
   render() {
     return (
-      <form className="GeneratorForm" onSubmit={this.submitForm()} onChange={this.updateForm()}>
+      <form className="GeneratorForm" onSubmit={this.submitForm()}>
 
         {this.state.error && 
           <div className="error-box">
             <h4 className="error-title">There's been some sort of error!</h4>
           </div>}
+
+        {this.state.generated && 
+        <div className="generated-password-wrapper">
+                <h4>Your generated password is</h4>
+                <h1><code>{this.state.generatedPassword}</code></h1>
+        </div>
+        }
 
         <div className="row form-row">
           <div className="col-md-4">
@@ -240,6 +240,7 @@ class GeneratorForm extends Component {
         </div>
         <hr/>
 
+        {this.state.generated &&
         <div className="row form-row">
           <div className="col-md-4">
               <h4 className="small-caps-title section-title">Statistics</h4>
@@ -276,18 +277,11 @@ class GeneratorForm extends Component {
             </div>
 
           </div>
-        </div>
+        </div>}
 
         <div className="generate-button-wrapper">
           <button type="submit" className="btn btn-generate">Generate</button>
         </div>
-
-        {this.state.generated && 
-        <div className="generated-password-wrapper">
-                <h4>Your generated password is</h4>
-                <h1><code>{this.state.generatedPassword}</code></h1>
-        </div>
-        }
 
       </form>
     )
