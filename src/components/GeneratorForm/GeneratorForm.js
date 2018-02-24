@@ -4,38 +4,67 @@ import PropTypes from 'prop-types'
 class GeneratorForm extends Component {
   constructor(props) {
     super(props);
-    this.state = { error : false, generated : false, entropyLowerBound : 0, entropyUpperBound : 0, strength : "Unknown" }
+    this.submitForm = this.submitForm.bind(this);
+    this.updateForm = this.updateForm.bind(this);
+    this.state = {
+      error : false,
+      generated : false,
+      entropyLowerBound : 0,
+      entropyUpperBound : 0,
+      strength : "Unknown",
+      lengthLowerBound : 0,
+      lengthUpperBound : 0,
+    };
   }
 
   submitForm() {
     return (e) => {
       e.preventDefault();
-      this.setState({generated:true})
+
+      const formData = new FormData(e.target);      
+
+      this.setState({generated:true, generatedPassword: "hello"})
     }
   }
 
-  updateStatistics() {
-    return 5
+  updateForm() {
+    return (e) => {
+      console.log(e);
+      const formData = new FormData(e.target);  
+
+      const numberOfWords = Number(formData.get('number-of-words'));
+      const minWordLength = Number(formData.get('minimum-word-length'));
+      const maxWordLength = Number(formData.get('maximum-word-length'));
+
+      const digitPadding = Number(formData.get('digits-before')) + Number(formData.get('digits-after'));
+      const characterPadding = Number(formData.get('characters-before')) + Number(formData.get('characters-after'));
+      
+      this.setState({
+        error : false,
+        lengthLowerBound: numberOfWords * minWordLength + (numberOfWords - 1) + digitPadding + characterPadding,
+        lengthUpperBound: numberOfWords * maxWordLength + (numberOfWords - 1) + digitPadding + characterPadding
+      });
+    }
   }
 
   render() {
     return (
-      <form className="GeneratorForm" onSubmit={this.submitForm()} onInput={() => this.updateStatistics() && this.setState({ error: false })} >
+      <form className="GeneratorForm" onSubmit={this.submitForm()} onChange={this.updateForm()}>
 
         {this.state.error && 
           <div className="error-box">
             <h4 className="error-title">There's been some sort of error!</h4>
           </div>}
 
-        <row className="row form-row">
+        <div className="row form-row">
           <div className="col-md-4">
               <h4 className="small-caps-title section-title">Words</h4>
           </div>
           <div className="col-md-8">
 
             <div className="row form-row"><div className="col-md-12">
-            <label className="small-caps-title" for="language-dropdown">Language
-              <select className="number" id="language-dropdown">
+            <label className="small-caps-title" >Language
+              <select className="number" name="language">
                 <option value="British">British English</option>
                 <option value="American">American English</option>
               </select>
@@ -43,10 +72,10 @@ class GeneratorForm extends Component {
             </div></div>
 
             <div className="row form-row"><div className="col-md-12">
-            <label className="small-caps-title" for="number-of-words-dropdown">Number of Words
-            <select className="number" id="number-of-words-dropdown">
+            <label className="small-caps-title" >Number of Words
+            <select className="number" name="number-of-words">
                 <option value="3">3</option>
-                <option selected="selected" value="4">4</option>
+                <option defaultValue="4">4</option>
                 <option value="5">5</option>
                 <option value="6">6</option>
                 <option value="7">7</option>
@@ -56,10 +85,10 @@ class GeneratorForm extends Component {
 
             <div className="row form-row">
             <div className="col-md-6">
-            <label class="small-caps-title" for="minimum-word-length">Minimum Word Length
-            <select class="number" id="minimum-word-length">
+            <label className="small-caps-title" >Minimum Word Length
+            <select className="number" name="minimum-word-length">
                 <option value="3">3</option>
-                <option selected="selected" value="4">4</option>
+                <option defaultValue="4">4</option>
                 <option value="5">5</option>
                 <option value="6">6</option>
                 <option value="7">7</option>
@@ -67,12 +96,12 @@ class GeneratorForm extends Component {
             </label>
             </div>
             <div className="col-md-6">
-            <label class="small-caps-title" for="maximum-word-length">Maximum Word Length
-            <select class="number" id="maximum-word-length">
+            <label className="small-caps-title" >Maximum Word Length
+            <select className="number" name="maximum-word-length">
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
-                <option selected="selected" value="6">6</option>
+                <option defaultValue="6">6</option>
                 <option value="7">7</option>
             </select>
             </label>
@@ -80,18 +109,18 @@ class GeneratorForm extends Component {
             </div>
 
           </div>
-        </row>
+        </div>
         <hr/>
 
-        <row className="row form-row">
+        <div className="row form-row">
           <div className="col-md-4">
               <h4 className="small-caps-title section-title">Transformations</h4>
           </div>
           <div className="col-md-8">
 
             <div className="row form-row"><div className="col-md-12">
-            <label class="small-caps-title" for="transformations-dropdown">Transformations to apply to words
-            <select class="u-full-width" id="transformations-dropdown">
+            <label className="small-caps-title" >Transformations to apply to words
+            <select className="u-full-wnameth" name="transformations">
                 <option value="alternate_word_case">alternate WORD case</option>
                 <option value="capitilise_each_word">Capitalise First Letter</option>
                 <option value="capitilise_all_other">lOWERCASE fIRST lETTER</option>
@@ -100,19 +129,19 @@ class GeneratorForm extends Component {
             </div></div>
 
           </div>
-        </row>
+        </div>
         <hr/>
 
-        <row className="row form-row">
+        <div className="row form-row">
           <div className="col-md-4">
               <h4 className="small-caps-title section-title">Seperator</h4>
           </div>
           <div className="col-md-8">
 
             <div className="row form-row"><div className="col-md-12">
-            <label class="small-caps-title" for="seperator-dropdown">Character Set
-            <select class="u-full-width" id="seperator-dropdown">
-                <option selected="selected" value="random">Random</option>
+            <label className="small-caps-title" >Character Set
+            <select className="u-full-wnameth" name="seperator">
+                <option defaultValue="random">Random</option>
                 <option value="+">+</option>
                 <option value="-">-</option>
                 <option value="|">|</option>
@@ -124,10 +153,10 @@ class GeneratorForm extends Component {
             </div></div>
 
           </div>
-        </row>
+        </div>
         <hr/>
 
-        <row className="row form-row">
+        <div className="row form-row">
           <div className="col-md-4">
               <h4 className="small-caps-title section-title">Digit Padding</h4>
           </div>
@@ -135,9 +164,9 @@ class GeneratorForm extends Component {
 
           <div className="row form-row">
             <div className="col-md-6">
-            <label class="small-caps-title" for="digits-before">Digits Before
-            <select class="number" id="digits-before">
-                <option selected="selected" value="2">2</option>
+            <label className="small-caps-title" >Digits Before
+            <select className="number" name="digits-before">
+                <option defaultValue="2">2</option>
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
@@ -146,9 +175,9 @@ class GeneratorForm extends Component {
             </label>
             </div>
             <div className="col-md-6">
-            <label class="small-caps-title" for="digits-after">Digits After
-            <select class="number" id="digits-after">
-                <option selected="selected" value="2">2</option>
+            <label className="small-caps-title" >Digits After
+            <select className="number" name="digits-after">
+                <option defaultValue="2">2</option>
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
@@ -159,10 +188,10 @@ class GeneratorForm extends Component {
             </div>
 
           </div>
-        </row>
+        </div>
         <hr/>
 
-        <row className="row form-row">
+        <div className="row form-row">
           <div className="col-md-4">
               <h4 className="small-caps-title section-title">Password Padding</h4>
           </div>
@@ -170,9 +199,9 @@ class GeneratorForm extends Component {
 
           <div className="row form-row">
             <div className="col-md-6">
-            <label class="small-caps-title" for="padding-characters-before">Characters Before
-            <select class="number" id="padding-characters-before">
-                <option selected="selected" value="2">2</option>
+            <label className="small-caps-title" >Characters Before
+            <select className="number" name="characters-before">
+                <option defaultValue="2">2</option>
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
@@ -181,9 +210,9 @@ class GeneratorForm extends Component {
             </label>
             </div>
             <div className="col-md-6">
-            <label class="small-caps-title" for="padding-characters-after">Characters After
-            <select class="number" id="padding-characters-after">
-                <option selected="selected" value="2">2</option>
+            <label className="small-caps-title" >Characters After
+            <select className="number" name="characters-after">
+                <option defaultValue="2">2</option>
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
@@ -194,9 +223,9 @@ class GeneratorForm extends Component {
             </div>
 
             <div className="row form-row"><div className="col-md-12">
-            <label class="small-caps-title" for="password-padding-set">Character Set
-            <select class="u-full-width" id="password-padding-set">
-                <option selected="selected" value="random">Random</option>
+            <label className="small-caps-title" >Character Set
+            <select className="u-full-wnameth" name="password-padding-set">
+                <option defaultValue="random">Random</option>
                 <option value="+">+</option>
                 <option value="-">-</option>
                 <option value="|">|</option>
@@ -208,41 +237,55 @@ class GeneratorForm extends Component {
             </div></div>
 
           </div>
-        </row>
+        </div>
         <hr/>
 
-        <row className="row form-row">
+        <div className="row form-row">
           <div className="col-md-4">
               <h4 className="small-caps-title section-title">Statistics</h4>
           </div>
           <div className="col-md-8">
 
-            <div class="row">
-              <div class="col-md-6">
-              <h1 class="small-caps-title">Entropy</h1>
-              <h1 class="stats-text">
+            <div className="row">
+              <div className="col-md-6">
+              <h1 className="small-caps-title">Entropy</h1>
+              <h1 className="stats-text">
                 {this.state.entropyLowerBound} bits <small><br/>to<br/></small> {this.state.entropyUpperBound} bits
               </h1>
               </div>
-              <div class="col-md-6">
-              <h1 class="small-caps-title">Strength</h1>
-              <h1 class="stats-text" id="strength-text">
+              <div className="col-md-6">
+              <h1 className="small-caps-title">Strength</h1>
+              <h1 className="stats-text" name="strength-text">
                 {this.state.strength}
+              </h1>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-md-6">
+              <h1 className="small-caps-title">Length</h1>
+              <h1 className="stats-text">
+                {this.state.lengthLowerBound} to {this.state.lengthUpperBound} 
+              </h1>
+              </div>
+              <div className="col-md-6">
+              <h1 className="small-caps-title">Coverage</h1>
+              <h1 className="stats-text" name="strength-text">
+                {this.state.coverage}
               </h1>
               </div>
             </div>
 
           </div>
-        </row>
+        </div>
 
         <div className="generate-button-wrapper">
           <button type="submit" className="btn btn-generate">Generate</button>
         </div>
 
         {this.state.generated && 
-        <div class="generated-password-wrapper">
-                <h4>Your password is</h4>
-                <h1>{this.state.generatedPassword}</h1>
+        <div className="generated-password-wrapper">
+                <h4>Your generated password is</h4>
+                <h1><code>{this.state.generatedPassword}</code></h1>
         </div>
         }
 
