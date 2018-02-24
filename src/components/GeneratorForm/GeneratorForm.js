@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import {words} from '../../EN_UK_dict.js'
 
 class GeneratorForm extends Component {
   constructor(props) {
@@ -12,6 +13,7 @@ class GeneratorForm extends Component {
       strength : "Unknown",
       lengthLowerBound : 0,
       lengthUpperBound : 0,
+      blindEntropy : 0,
       coverage : 0
     };
   }
@@ -31,18 +33,33 @@ class GeneratorForm extends Component {
 
     const entropy = Math.log2(
       Math.pow(dictionarySize, numberOfWords) * seperatorSet.length * paddingSet.length * (digitPadding == 0 ? 0 : 10)
-    ).toFixed(2);
+    ).toFixed(0);
 
     const totalCharacterSetSize = (
       52 + (digitPadding == 0 ? 0 : 10) + seperatorSet.length + paddingSet.length - (seperatorSet == paddingSet ? seperatorSet.length : 1)
     );
+
+    const lengthLowerBound = numberOfWords * minWordLength + (numberOfWords - 1) + digitPadding + characterPadding;
+    const lengthUpperBound = numberOfWords * maxWordLength + (numberOfWords - 1) + digitPadding + characterPadding;
+
+    const blindEntropy = Math.log2(
+      Math.pow(totalCharacterSetSize, lengthUpperBound)
+    ).toFixed(0);
     
     this.setState({
       lengthLowerBound: numberOfWords * minWordLength + (numberOfWords - 1) + digitPadding + characterPadding,
       lengthUpperBound: numberOfWords * maxWordLength + (numberOfWords - 1) + digitPadding + characterPadding,
       coverage : totalCharacterSetSize,
-      entropy : entropy
+      entropy : entropy,
+      blindEntropy : blindEntropy,
     });
+  }
+
+  generatePassword(formData) {
+    const numberOfWords = Number(formData.get('number-of-words'));
+    
+    var index=Math.floor(Math.random()*words.length);
+    return words[index];
   }
 
   submitForm() {
@@ -53,9 +70,9 @@ class GeneratorForm extends Component {
 
       this.updateStats(formData);
 
-      
+      const password = this.generatePassword(formData);
 
-      this.setState({generated:true, generatedPassword: formData.get('language')})
+      this.setState({generated:true, generatedPassword: password})
     }
   }
 
@@ -90,9 +107,9 @@ class GeneratorForm extends Component {
               </h1>
               </div>
               <div className="col-md-6">
-              <h1 className="small-caps-title">Strength</h1>
-              <h1 className="stats-text" name="strength-text">
-                {this.state.strength}
+              <h1 className="small-caps-title">Blind Entropy</h1>
+              <h1 className="stats-text">
+                {this.state.blindEntropy} bits
               </h1>
               </div>
             </div>
@@ -125,7 +142,6 @@ class GeneratorForm extends Component {
             <label className="small-caps-title" >Language
               <select className="number" name="language">
                 <option value="British">British English</option>
-                <option value="American">American English</option>
               </select>
             </label>
             </div></div>
