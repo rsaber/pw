@@ -52,7 +52,7 @@ class GeneratorForm extends Component {
         {this.state.generated && 
         <div className="generated-password-wrapper">
                 <h4>Your generated password is</h4>
-                <h1><code>{this.state.generatedPassword}</code></h1>
+                <h1 className="generated-password"><code>{this.state.generatedPassword}</code></h1>
         </div>
         }
 
