@@ -16,9 +16,6 @@ class GeneratorForm extends Component {
       blindEntropy : 0,
       coverage : 0
     };
-    this.symbolSet = [
-      '+', '-', '|', '[', ']', '=', '!', '@', '#', '$', '%', '^', '&', '*', '_', '~'
-    ];
   }
 
   updateStats(formData) {
@@ -29,8 +26,8 @@ class GeneratorForm extends Component {
     const digitPadding = Number(formData.get('digits-before')) + Number(formData.get('digits-after'));
     const characterPadding = Number(formData.get('characters-before')) + Number(formData.get('characters-after'));
 
-    const seperatorSet = formData.get('seperator-set') == 'Random' ? this.symbolSet : [formData.get('seperator-set')];
-    const paddingSet = formData.get('password-padding-set') == 'Random' ? this.symbolSet : [formData.get('password-padding-set')];
+    const seperatorSet = formData.get('seperator-set').split(',');
+    const paddingSet = formData.get('padding-set').split(',');
 
     const dictionarySize = words.length;
 
@@ -42,8 +39,8 @@ class GeneratorForm extends Component {
       52 + (digitPadding == 0 ? 0 : 10) + seperatorSet.length + paddingSet.length - (seperatorSet == paddingSet ? seperatorSet.length : 1)
     );
 
-    const lengthLowerBound = numberOfWords * minWordLength + (numberOfWords - 1) + digitPadding + characterPadding;
-    const lengthUpperBound = numberOfWords * maxWordLength + (numberOfWords - 1) + digitPadding + characterPadding;
+    const lengthLowerBound = numberOfWords * minWordLength + (numberOfWords + 1) + digitPadding + characterPadding;
+    const lengthUpperBound = numberOfWords * maxWordLength + (numberOfWords + 1) + digitPadding + characterPadding;
 
     const blindEntropy = Math.log2(
       Math.pow(totalCharacterSetSize, lengthUpperBound)
@@ -67,8 +64,8 @@ class GeneratorForm extends Component {
     const paddingBefore = Number(formData.get('characters-before'));
     const paddingAfter = Number(formData.get('characters-after'));
 
-    const seperatorSet = formData.get('seperator-set') == 'Random' ? this.symbolSet : [formData.get('seperator-set')];
-    const paddingSet = formData.get('password-padding-set') == 'Random' ? this.symbolSet : [formData.get('password-padding-set')];
+    const seperatorSet = formData.get('seperator-set').split(',');
+    const paddingSet = formData.get('padding-set').split(',');
 
     const seperator = seperatorSet[Math.floor(Math.random()*seperatorSet.length)];
     const padding = paddingSet[Math.floor(Math.random()*paddingSet.length)];
@@ -282,17 +279,8 @@ class GeneratorForm extends Component {
           <div className="col-md-8">
 
             <div className="row form-row"><div className="col-md-12">
-            <label className="small-caps-title" >Character Set
-            <select className="u-full-wnameth" name="seperator-set">
-                <option defaultValue="random">Random</option>
-                <option value="+">+</option>
-                <option value="-">-</option>
-                <option value="|">|</option>
-                <option value="[">[</option>
-                <option value="]">]</option>
-                <option value="=">=</option>
-            </select>
-            </label>
+            <label className="small-caps-title" >Comma Delimited Character Set</label>
+            <input name="seperator-set" defaultValue={['+', '-', '|', '=', '!', '@', '#', '$', '%', '^', '&', '*', '_', '~', '<', '>', '?', '`']} maxLength="990"></input>
             </div></div>
 
           </div>
@@ -374,17 +362,10 @@ class GeneratorForm extends Component {
             </div>
 
             <div className="row form-row"><div className="col-md-12">
-            <label className="small-caps-title" >Character Set
-            <select className="u-full-wnameth" name="password-padding-set">
-                <option defaultValue="random">Random</option>
-                <option value="+">+</option>
-                <option value="-">-</option>
-                <option value="|">|</option>
-                <option value="[">[</option>
-                <option value="]">]</option>
-                <option value="=">=</option>
-            </select>
+            <label className="small-caps-title" >Comma Delimited Character Set
             </label>
+            <input name="padding-set" defaultValue={['+', '-', '|', '=', '!', '@', '#', '$', '%', '^', '&', '*', '_', '~', '<', '>', '?', '`']} maxLength="990"></input>
+            
             </div></div>
 
           </div>
