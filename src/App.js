@@ -20,6 +20,10 @@ class App extends Component {
 
           </header>
           <GeneratorForm/>
+
+          <div class="footer">
+            <h5>If you found this useful, consider telling your friends.</h5>
+          </div>
         </Container>
       </div>
     );

@@ -10,7 +10,11 @@ class GeneratorForm extends Component {
   render() {
     return (
       <form className="GeneratorForm">
-        {this.state.error && "There's been an error!"}
+        {this.state.error && 
+        <div className="error-box">
+          <h4 className="error-title">There's been some sort of error!</h4>
+        </div>
+        }
         <row className="row form-row">
           <div className="col-md-4">
               <h4 className="small-caps-title section-title">Words</h4>
@@ -218,9 +222,17 @@ class GeneratorForm extends Component {
 
           </div>
         </row>
-        <hr/>
 
+        <div className="generate-button-wrapper">
+          <button type="submit" className="btn btn-generate">Generate</button>
+        </div>
 
+        {this.state.generated && 
+        <div class="generated-password-wrapper">
+                <h4>Your password is</h4>
+                <h1>{this.state.generatedPassword}</h1>
+        </div>
+        }
 
       </form>
     )
