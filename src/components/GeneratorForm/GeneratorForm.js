@@ -113,6 +113,9 @@ class GeneratorForm extends Component {
         case 'upper':
           word = word.toUpperCase()
           break;
+        case 'untouched':
+        default:
+          break;
       }
       password.words.push(word);
     }
@@ -294,7 +297,8 @@ class GeneratorForm extends Component {
             <div className="row form-row"><div className="col-md-12">
             <label className="small-caps-title" >Transformations to apply to words
             <select className="u-full-wnameth" name="transformations">
-                <option value="alternate_word_case">alternate WORD case</option>
+                <option value="untouched">Untouched</option>
+                <option selected value="alternate_word_case">alternate WORD case</option>
                 <option value="capitilise_each_word">Capitalise First Letter</option>
                 <option value="capitilise_all_other">lOWERCASE fIRST lETTER</option>
                 <option value="lower">entirely lower case</option>
