@@ -16,7 +16,7 @@ class App extends Component {
 
             <h5 className="title">Everything is done in your browser. Absolutely no data is sent to us.</h5>
 
-            <h6 className="title">Inspired by the <a href="#">xkcd</a> comic.</h6>
+            <h6 className="title">Inspired by the <a href="https://xkcd.com/936/">xkcd</a> comic.</h6>
 
           </header>
           <GeneratorForm/>
