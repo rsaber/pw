@@ -73,35 +73,28 @@ class GeneratorForm extends Component {
     const seperator = seperatorSet[Math.floor(Math.random()*seperatorSet.length)];
     const padding = paddingSet[Math.floor(Math.random()*paddingSet.length)];
 
-    var password = "";
+    var password = {
+      seperator: seperator, 
+      padding: padding, 
+      words: [], 
+      digits: [],
+      paddingBefore : paddingBefore,
+      paddingAfter : paddingAfter,
+      digitsBefore : digitsBefore,
+      digitsAfter : digitsAfter,
+    };
     var i;
 
     /* Words */
     for(i=0; i<numberOfWords; i++) {
-      password += words[Math.floor(Math.random()*words.length)];
-      password += seperator;
+      password.words.push( words[Math.floor(Math.random()*words.length)]);
     }
-    password = password.slice(0, -1);
 
     /* Digit Padding */
-    for(i=0; i<digitsAfter; i++) {
-      password += Math.floor(Math.random()*10);
+    for(i=0; i<digitsAfter + digitsBefore; i++) {
+      password.digits.push(Math.floor(Math.random()*10));
     }
-
-    for(i=0; i<digitsBefore; i++) {
-      password = Math.floor(Math.random()*10) + password;
-    }
-
-    /* Character Padding */
-    for(i=0; i<paddingAfter; i++) {
-      password += padding
-    }
-
-    for(i=0; i<paddingBefore; i++) {
-      password = padding + password;
-    }
-    
-
+ 
     return password;
   }
 
@@ -120,6 +113,7 @@ class GeneratorForm extends Component {
   }
 
   render() {
+    const pw = this.state.generatedPassword;
     return (
       <form className="GeneratorForm" onSubmit={this.submitForm()}>
 
@@ -131,7 +125,36 @@ class GeneratorForm extends Component {
         {this.state.generated && 
         <div className="generated-password-wrapper">
                 <h4>Your generated password is</h4>
-                <h1 className="generated-password"><code>{this.state.generatedPassword}</code></h1>
+                <h1 className="generated-password">
+                <code>
+                  <span class="pw-char-padding">
+                    { Array(pw.paddingBefore).fill(pw.padding).map(function(u ,i){
+                      return u
+                    })}
+                  </span>
+                  <span class="pw-digit-padding">
+                    { pw.digits.slice(0, pw.digitsBefore).map(function(u ,i){
+                      return u
+                    })}
+                  </span>
+                  <span class="pw-seperator">{pw.seperator}</span>
+                  <span class="pw-words">
+                    { pw.words.map(function(u ,i){
+                      return <span>{u}<span class="pw-seperator">{pw.seperator}</span></span>
+                    })}
+                  </span>
+                  <span class="pw-digit-padding">
+                    { pw.digits.slice(pw.digitsBefore).map(function(u ,i){
+                      return u
+                    })}
+                  </span>
+                  <span class="pw-char-padding">
+                    { Array(pw.paddingAfter).fill(pw.padding).map(function(u ,i){
+                      return u
+                    })}
+                  </span>
+                </code>
+                </h1>
         </div>
         }
 
@@ -362,7 +385,7 @@ class GeneratorForm extends Component {
         </div>
 
       </form>
-    )
+    );
   }
 }
 
