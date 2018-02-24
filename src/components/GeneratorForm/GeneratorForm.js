@@ -7,14 +7,26 @@ class GeneratorForm extends Component {
     this.state = { error : false, generated : false, entropyLowerBound : 0, entropyUpperBound : 0, strength : "Unknown" }
   }
 
+  submitForm() {
+    return (e) => {
+      e.preventDefault();
+      this.setState({generated:true})
+    }
+  }
+
+  updateStatistics() {
+    return 5
+  }
+
   render() {
     return (
-      <form className="GeneratorForm">
+      <form className="GeneratorForm" onSubmit={this.submitForm()} onInput={() => this.updateStatistics() && this.setState({ error: false })} >
+
         {this.state.error && 
-        <div className="error-box">
-          <h4 className="error-title">There's been some sort of error!</h4>
-        </div>
-        }
+          <div className="error-box">
+            <h4 className="error-title">There's been some sort of error!</h4>
+          </div>}
+
         <row className="row form-row">
           <div className="col-md-4">
               <h4 className="small-caps-title section-title">Words</h4>
