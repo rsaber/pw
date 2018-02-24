@@ -70,6 +70,8 @@ class GeneratorForm extends Component {
     const seperator = seperatorSet[Math.floor(Math.random()*seperatorSet.length)];
     const padding = paddingSet[Math.floor(Math.random()*paddingSet.length)];
 
+    const transformation = formData.get('transformations');
+
     var password = {
       seperator: seperator, 
       padding: padding, 
@@ -84,7 +86,25 @@ class GeneratorForm extends Component {
 
     /* Words */
     for(i=0; i<numberOfWords; i++) {
-      password.words.push( words[Math.floor(Math.random()*words.length)]);
+      var word = words[Math.floor(Math.random()*words.length)];
+      switch(transformation) {
+        case 'alternate_word_case':
+          word = (i % 2 == 0) ? word.toUpperCase() : word.toLowerCase();
+          break;
+        case 'capitilise_each_word':
+          word = word.charAt(0).toUpperCase() + word.slice(1);
+          break;
+        case 'capitilise_all_other':
+          word = word.charAt(0).toLowerCase() + word.toUpperCase().slice(1);
+          break;
+        case 'lower':
+          word = word.toLowerCase()
+          break;
+        case 'upper':
+          word = word.toUpperCase()
+          break;
+      }
+      password.words.push(word);
     }
 
     /* Digit Padding */
@@ -264,6 +284,8 @@ class GeneratorForm extends Component {
                 <option value="alternate_word_case">alternate WORD case</option>
                 <option value="capitilise_each_word">Capitalise First Letter</option>
                 <option value="capitilise_all_other">lOWERCASE fIRST lETTER</option>
+                <option value="lower">entirely lower case</option>
+                <option value="upper">ENTIRELY UPPER CASE</option>
             </select>
             </label>
             </div></div>
