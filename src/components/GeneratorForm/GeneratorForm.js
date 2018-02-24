@@ -16,6 +16,9 @@ class GeneratorForm extends Component {
       blindEntropy : 0,
       coverage : 0
     };
+    this.symbolSet = [
+      '+', '-', '|', '[', ']', '=', '!', '@', '#', '$', '%', '^', '&', '*', '_', '~'
+    ];
   }
 
   updateStats(formData) {
@@ -26,10 +29,10 @@ class GeneratorForm extends Component {
     const digitPadding = Number(formData.get('digits-before')) + Number(formData.get('digits-after'));
     const characterPadding = Number(formData.get('characters-before')) + Number(formData.get('characters-after'));
 
-    const seperatorSet = formData.get('seperator-set') == 'Random' ? ['+', '-', '|', '[', ']', '='] : [formData.get('seperator-set')];
-    const paddingSet = formData.get('password-padding-set') == 'Random' ? ['+', '-', '|', '[', ']', '='] : [formData.get('password-padding-set')];
+    const seperatorSet = formData.get('seperator-set') == 'Random' ? this.symbolSet : [formData.get('seperator-set')];
+    const paddingSet = formData.get('password-padding-set') == 'Random' ? this.symbolSet : [formData.get('password-padding-set')];
 
-    const dictionarySize = 30000;
+    const dictionarySize = words.length;
 
     const entropy = Math.log2(
       Math.pow(dictionarySize, numberOfWords) * seperatorSet.length * paddingSet.length * (digitPadding == 0 ? 0 : 10)
@@ -57,9 +60,49 @@ class GeneratorForm extends Component {
 
   generatePassword(formData) {
     const numberOfWords = Number(formData.get('number-of-words'));
+
+    const digitsBefore = Number(formData.get('digits-before'));
+    const digitsAfter = Number(formData.get('digits-after'));
+
+    const paddingBefore = Number(formData.get('characters-before'));
+    const paddingAfter = Number(formData.get('characters-after'));
+
+    const seperatorSet = formData.get('seperator-set') == 'Random' ? this.symbolSet : [formData.get('seperator-set')];
+    const paddingSet = formData.get('password-padding-set') == 'Random' ? this.symbolSet : [formData.get('password-padding-set')];
+
+    const seperator = seperatorSet[Math.floor(Math.random()*seperatorSet.length)];
+    const padding = paddingSet[Math.floor(Math.random()*paddingSet.length)];
+
+    var password = "";
+    var i;
+
+    /* Words */
+    for(i=0; i<numberOfWords; i++) {
+      password += words[Math.floor(Math.random()*words.length)];
+      password += seperator;
+    }
+    password = password.slice(0, -1);
+
+    /* Digit Padding */
+    for(i=0; i<digitsAfter; i++) {
+      password += Math.floor(Math.random()*10);
+    }
+
+    for(i=0; i<digitsBefore; i++) {
+      password = Math.floor(Math.random()*10) + password;
+    }
+
+    /* Character Padding */
+    for(i=0; i<paddingAfter; i++) {
+      password += padding
+    }
+
+    for(i=0; i<paddingBefore; i++) {
+      password = padding + password;
+    }
     
-    var index=Math.floor(Math.random()*words.length);
-    return words[index];
+
+    return password;
   }
 
   submitForm() {
