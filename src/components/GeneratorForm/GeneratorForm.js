@@ -8,12 +8,41 @@ class GeneratorForm extends Component {
     this.state = {
       error : false,
       generated : false,
-      entropyLowerBound : 0,
-      entropyUpperBound : 0,
+      entropy : 0,
       strength : "Unknown",
       lengthLowerBound : 0,
       lengthUpperBound : 0,
+      coverage : 0
     };
+  }
+
+  updateStats(formData) {
+    const numberOfWords = Number(formData.get('number-of-words'));
+    const minWordLength = Number(formData.get('minimum-word-length'));
+    const maxWordLength = Number(formData.get('maximum-word-length'));
+
+    const digitPadding = Number(formData.get('digits-before')) + Number(formData.get('digits-after'));
+    const characterPadding = Number(formData.get('characters-before')) + Number(formData.get('characters-after'));
+
+    const seperatorSet = formData.get('seperator-set') == 'Random' ? ['+', '-', '|', '[', ']', '='] : [formData.get('seperator-set')];
+    const paddingSet = formData.get('password-padding-set') == 'Random' ? ['+', '-', '|', '[', ']', '='] : [formData.get('password-padding-set')];
+
+    const dictionarySize = 30000;
+
+    const entropy = Math.log2(
+      Math.pow(dictionarySize, numberOfWords) * seperatorSet.length * paddingSet.length * (digitPadding == 0 ? 0 : 10)
+    ).toFixed(2);
+
+    const totalCharacterSetSize = (
+      52 + (digitPadding == 0 ? 0 : 10) + seperatorSet.length + paddingSet.length - (seperatorSet == paddingSet ? seperatorSet.length : 1)
+    );
+    
+    this.setState({
+      lengthLowerBound: numberOfWords * minWordLength + (numberOfWords - 1) + digitPadding + characterPadding,
+      lengthUpperBound: numberOfWords * maxWordLength + (numberOfWords - 1) + digitPadding + characterPadding,
+      coverage : totalCharacterSetSize,
+      entropy : entropy
+    });
   }
 
   submitForm() {
@@ -22,19 +51,9 @@ class GeneratorForm extends Component {
 
       const formData = new FormData(e.target);
 
-      const numberOfWords = Number(formData.get('number-of-words'));
-      const minWordLength = Number(formData.get('minimum-word-length'));
-      const maxWordLength = Number(formData.get('maximum-word-length'));
+      this.updateStats(formData);
 
-      const digitPadding = Number(formData.get('digits-before')) + Number(formData.get('digits-after'));
-      const characterPadding = Number(formData.get('characters-before')) + Number(formData.get('characters-after'));
       
-      this.setState({
-        error : false,
-        generated : true,
-        lengthLowerBound: numberOfWords * minWordLength + (numberOfWords - 1) + digitPadding + characterPadding,
-        lengthUpperBound: numberOfWords * maxWordLength + (numberOfWords - 1) + digitPadding + characterPadding
-      });
 
       this.setState({generated:true, generatedPassword: formData.get('language')})
     }
@@ -54,6 +73,46 @@ class GeneratorForm extends Component {
                 <h4>Your generated password is</h4>
                 <h1 className="generated-password"><code>{this.state.generatedPassword}</code></h1>
         </div>
+        }
+
+        {this.state.generated &&
+        <div><div className="row form-row">
+          <div className="col-md-4">
+              <h4 className="small-caps-title section-title">Statistics</h4>
+          </div>
+          <div className="col-md-8">
+
+            <div className="row">
+              <div className="col-md-6">
+              <h1 className="small-caps-title">Entropy</h1>
+              <h1 className="stats-text">
+                {this.state.entropy} bits
+              </h1>
+              </div>
+              <div className="col-md-6">
+              <h1 className="small-caps-title">Strength</h1>
+              <h1 className="stats-text" name="strength-text">
+                {this.state.strength}
+              </h1>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-md-6">
+              <h1 className="small-caps-title">Length</h1>
+              <h1 className="stats-text">
+                {this.state.lengthLowerBound} <small>to</small> {this.state.lengthUpperBound} characters
+              </h1>
+              </div>
+              <div className="col-md-6">
+              <h1 className="small-caps-title">Coverage</h1>
+              <h1 className="stats-text" name="strength-text">
+                {this.state.coverage} characters
+              </h1>
+              </div>
+            </div>
+
+          </div>
+        </div><hr/></div>
         }
 
         <div className="row form-row">
@@ -88,7 +147,7 @@ class GeneratorForm extends Component {
             <label className="small-caps-title" >Minimum Word Length
             <select className="number" name="minimum-word-length">
                 <option value="3">3</option>
-                <option defaultValue="4">4</option>
+                <option selected defaultValue="4">4</option>
                 <option value="5">5</option>
                 <option value="6">6</option>
                 <option value="7">7</option>
@@ -101,7 +160,7 @@ class GeneratorForm extends Component {
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
-                <option defaultValue="6">6</option>
+                <option selected defaultValue="6">6</option>
                 <option value="7">7</option>
             </select>
             </label>
@@ -140,7 +199,7 @@ class GeneratorForm extends Component {
 
             <div className="row form-row"><div className="col-md-12">
             <label className="small-caps-title" >Character Set
-            <select className="u-full-wnameth" name="seperator">
+            <select className="u-full-wnameth" name="seperator-set">
                 <option defaultValue="random">Random</option>
                 <option value="+">+</option>
                 <option value="-">-</option>
@@ -238,46 +297,6 @@ class GeneratorForm extends Component {
 
           </div>
         </div>
-        <hr/>
-
-        {this.state.generated &&
-        <div className="row form-row">
-          <div className="col-md-4">
-              <h4 className="small-caps-title section-title">Statistics</h4>
-          </div>
-          <div className="col-md-8">
-
-            <div className="row">
-              <div className="col-md-6">
-              <h1 className="small-caps-title">Entropy</h1>
-              <h1 className="stats-text">
-                {this.state.entropyLowerBound} bits <small><br/>to<br/></small> {this.state.entropyUpperBound} bits
-              </h1>
-              </div>
-              <div className="col-md-6">
-              <h1 className="small-caps-title">Strength</h1>
-              <h1 className="stats-text" name="strength-text">
-                {this.state.strength}
-              </h1>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-md-6">
-              <h1 className="small-caps-title">Length</h1>
-              <h1 className="stats-text">
-                {this.state.lengthLowerBound} to {this.state.lengthUpperBound} 
-              </h1>
-              </div>
-              <div className="col-md-6">
-              <h1 className="small-caps-title">Coverage</h1>
-              <h1 className="stats-text" name="strength-text">
-                {this.state.coverage}
-              </h1>
-              </div>
-            </div>
-
-          </div>
-        </div>}
 
         <div className="generate-button-wrapper">
           <button type="submit" className="btn btn-generate">Generate</button>
