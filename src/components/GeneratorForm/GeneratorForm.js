@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 import {words} from '../../EN_UK_dict.js'
 
 class GeneratorForm extends Component {
@@ -34,11 +33,11 @@ class GeneratorForm extends Component {
     const dictionarySize = filteredWords.length;
 
     const entropy = Math.log2(
-      Math.pow(dictionarySize, numberOfWords) * seperatorSet.length * paddingSet.length * (digitPadding == 0 ? 0 : 10)
+      Math.pow(dictionarySize, numberOfWords) * seperatorSet.length * paddingSet.length * (digitPadding === 0 ? 0 : 10)
     ).toFixed(0);
 
     const totalCharacterSetSize = (
-      52 + (digitPadding == 0 ? 0 : 10) + seperatorSet.length + paddingSet.length - (seperatorSet == paddingSet ? seperatorSet.length : 1)
+      52 + (digitPadding === 0 ? 0 : 10) + seperatorSet.length + paddingSet.length - (seperatorSet === paddingSet ? seperatorSet.length : 1)
     );
 
     const lengthLowerBound = numberOfWords * minWordLength + (numberOfWords + 1) + digitPadding + characterPadding;
@@ -49,8 +48,8 @@ class GeneratorForm extends Component {
     ).toFixed(0);
     
     this.setState({
-      lengthLowerBound: numberOfWords * minWordLength + (numberOfWords - 1) + digitPadding + characterPadding,
-      lengthUpperBound: numberOfWords * maxWordLength + (numberOfWords - 1) + digitPadding + characterPadding,
+      lengthLowerBound: lengthLowerBound,
+      lengthUpperBound: lengthUpperBound,
       coverage : totalCharacterSetSize,
       entropy : entropy,
       blindEntropy : blindEntropy,
@@ -90,7 +89,7 @@ class GeneratorForm extends Component {
 
     const filteredWords = words.filter(word => word.length >= minWordLength && word.length <= maxWordLength);
 
-    if(filteredWords.length == 0) {
+    if(filteredWords.length === 0) {
       return password;
     }
 
@@ -213,7 +212,7 @@ class GeneratorForm extends Component {
               <div className="col-md-6">
               <h1 className="small-caps-title">Length</h1>
               <h1 className="stats-text">
-                {this.state.lengthLowerBound == this.state.lengthUpperBound ?
+                {this.state.lengthLowerBound === this.state.lengthUpperBound ?
                 this.state.lengthLowerBound + " characters ":
                 this.state.lengthLowerBound + " to " + this.state.lengthUpperBound + " characters"
                 }

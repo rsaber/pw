@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import {Container} from 'reactstrap';
 import GeneratorForm from './components/GeneratorForm/GeneratorForm.js';
 
