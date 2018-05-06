@@ -154,7 +154,7 @@ class GeneratorForm extends Component {
         {this.state.generated && 
         <div className="generated-password-wrapper">
                 <h4>Your generated password is</h4>
-                <h1 className="generated-password">
+                <h1 className="generated-password typewriter">
                 <code>
                   <span class="pw-char-padding">
                     { Array(pw.paddingBefore).fill(pw.padding).map(function(u ,i){
